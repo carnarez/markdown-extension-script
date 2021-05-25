@@ -7,9 +7,9 @@ setuptools.setup(
     description=(
         "Add support for <script> tags to Python-Markdown via the %[]() operator."
     ),
-    install_requires = ["markdown"],
+    install_requires=["markdown"],
     name="pymdx-script",
     py_modules=["pymdx_script"],
-    url="https://github.com/carnarez/astdocs",
+    url="https://github.com/carnarez/pymdx-script",
     version="0.0.1",
 )
