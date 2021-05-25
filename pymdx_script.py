@@ -1,6 +1,6 @@
 """Python-Markdown extension converting the `%[]()` markers into `<script>` tags.
 
-Refer to the brilliant
+`pip install git+https://github.com/carnarez/pymdx-script` and refer to the brilliant
 [`Python` implementation](https://github.com/Python-Markdown/markdown).
 
 Example
@@ -26,7 +26,8 @@ class ScriptPreprocessor(Preprocessor):
     """Preprocessor to catch and replace the `%[]()` markers."""
 
     def __init__(self, md: Markdown):
-        """
+        """All methods inherited, but the `run()` one below.
+
         Parameters
         ----------
         md : markdown.core.Markdown
@@ -38,10 +39,16 @@ class ScriptPreprocessor(Preprocessor):
     def html(id_: str, src: str) -> str:
         """Return the HTML block including the parameters.
 
+        At the moment, the returned HTML is:
+
+        ```html
+        <p id=""><script src=""></script></p>
+        ```
+
         Parameters
         ----------
         id_ : str
-            The `id` of the HTML elements.
+            The `id` of the HTML elements. To be fetched via `.getElementById()`.
         src : str
             The path to the script.
 
@@ -56,8 +63,9 @@ class ScriptPreprocessor(Preprocessor):
     def sanitize(string: str) -> str:
         """Clean up a string.
 
-        Strip a string from non-alphanumerical characters, lower case it, and replace
-        all spaces by hyphens.
+        1. Strip non-alphanumerical characters
+        2. Lowercase
+        3. Replace all spaces by hyphens
 
         Parameters
         ----------
@@ -72,7 +80,7 @@ class ScriptPreprocessor(Preprocessor):
         return "".join(re.findall(r"[A-Za-z0-9 ]+", string)).lower().replace(" ", "-")
 
     def run(self, lines: typing.List[str]) -> typing.List[str]:
-        r"""Overwritten method to process the input `Markdown` (split by `\n`).
+        r"""Overwritten method to process the input `Markdown` lines.
 
         Paramaters
         ----------
@@ -95,7 +103,7 @@ class ScriptPreprocessor(Preprocessor):
 
 
 class ScriptExtension(Extension):
-    """Extension proper."""
+    """Extension to be imported when calling for the renderer."""
 
     def extendMarkdown(self, md: Markdown):
         """Overwritten method to process the content.

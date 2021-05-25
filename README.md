@@ -2,7 +2,7 @@
 
 Python-Markdown extension converting the `%[]()` markers into `<script>` tags.
 
-Refer to the brilliant
+`pip install git+https://github.com/carnarez/pymdx-script` and refer to the brilliant
 [`Python` implementation](https://github.com/Python-Markdown/markdown).
 
 **Example:**
@@ -38,7 +38,9 @@ Preprocessor to catch and replace the `%[]()` markers.
 ScriptPreprocessor(md: Markdown)
 ```
 
-## Parameters
+All methods inherited, but the `run()` one below.
+
+**Parameters:**
 
 - `md` \[`markdown.core.Markdown`\]: `markdown.core.Markdown` object to process.
 
@@ -52,9 +54,15 @@ html(id_: str, src: str) -> str:
 
 Return the HTML block including the parameters.
 
+At the moment, the returned HTML is:
+
+```html
+<p id=""><script src=""></script></p>
+```
+
 **Parameters:**
 
-- `id_` \[`str`\]: The `id` of the HTML elements.
+- `id_` \[`str`\]: The `id` of the HTML elements. To be fetched via `.getElementById()`.
 - `src` \[`str`\]: The path to the script.
 
 **Returns:**
@@ -71,8 +79,9 @@ sanitize(string: str) -> str:
 
 Clean up a string.
 
-Strip a string from non-alphanumerical characters, lower case it, and replace all spaces
-by hyphens.
+1. Strip non-alphanumerical characters
+1. Lowercase
+1. Replace all spaces by hyphens
 
 **Parameters:**
 
@@ -87,10 +96,10 @@ by hyphens.
 ##### `pymdx_script.ScriptPreprocessor.run`
 
 ```python
-run(self, lines: typing.List[str]) -> typing.List[str]:
+run(lines: typing.List[str]) -> typing.List[str]:
 ```
 
-Overwritten method to process the input `Markdown` (split by `\n`).
+Overwritten method to process the input `Markdown` lines.
 
 **Paramaters:**
 
@@ -102,7 +111,7 @@ Overwritten method to process the input `Markdown` (split by `\n`).
 
 ### `pymdx_script.ScriptExtension`
 
-Extension proper.
+Extension to be imported when calling for the renderer.
 
 **Methods:**
 
@@ -119,7 +128,7 @@ ScriptExtension()
 ##### `pymdx_script.ScriptExtension.extendMarkdown`
 
 ```python
-extendMarkdown(self, md: Markdown):
+extendMarkdown(md: Markdown):
 ```
 
 Overwritten method to process the content.
