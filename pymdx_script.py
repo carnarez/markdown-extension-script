@@ -8,7 +8,7 @@ Example
 ```python
 import markdown
 provided = "%[Run script.js (d3.js)](/wherever/script.js)"
-rendered = markdown.markdown(src, extensions=[ScriptExtension()])
+rendered = markdown.markdown(provided, extensions=[ScriptExtension()])
 expected = '<p id="run-scriptjs-d3js"><script src="/wherever/script.js"></script></p>'
 assert rendered == expected
 ```
@@ -31,7 +31,7 @@ class ScriptPreprocessor(Preprocessor):
         Parameters
         ----------
         md : markdown.core.Markdown
-            `markdown.core.Markdown` object to process.
+            Internal `Markdown` object to process.
         """
         super().__init__(md)
 
@@ -111,7 +111,7 @@ class ScriptExtension(Extension):
         Parameters
         ----------
         md : markdown.core.Markdown
-            `markdown.core.Markdown` object to process.
+            Internal `Markdown` object to process.
 
         Notes
         -----
@@ -119,5 +119,5 @@ class ScriptExtension(Extension):
         called with a high priority.
         """
         md.preprocessors.register(
-            ScriptPreprocessor(md), name="scripti-tags", priority=100
+            ScriptPreprocessor(md), name="script-tags", priority=100
         )

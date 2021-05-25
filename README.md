@@ -10,7 +10,7 @@ Python-Markdown extension converting the `%[]()` markers into `<script>` tags.
 ```python
 import markdown
 provided = "%[Run script.js (d3.js)](/wherever/script.js)"
-rendered = markdown.markdown(src, extensions=[ScriptExtension()])
+rendered = markdown.markdown(provided, extensions=[ScriptExtension()])
 expected = '<p id="run-scriptjs-d3js"><script src="/wherever/script.js"></script></p>'
 assert rendered == expected
 ```
@@ -42,7 +42,7 @@ All methods inherited, but the `run()` one below.
 
 **Parameters:**
 
-- `md` \[`markdown.core.Markdown`\]: `markdown.core.Markdown` object to process.
+- `md` \[`markdown.core.Markdown`\]: Internal `Markdown` object to process.
 
 #### Methods
 
@@ -135,7 +135,7 @@ Overwritten method to process the content.
 
 **Parameters:**
 
-- `md` \[`markdown.core.Markdown`\]: `markdown.core.Markdown` object to process.
+- `md` \[`markdown.core.Markdown`\]: Internal `Markdown` object to process.
 
 **Notes:**
 
