@@ -1,6 +1,6 @@
 """Python-Markdown extension processing the `%[]()` markers into `<script>` tags.
 
-`pip install git+https://github.com/carnarez/pymdx-script` and refer to the brilliant
+`pip install git+https://github.com/carnarez/markdown-script` and refer to the brilliant
 [`Python` implementation](https://github.com/Python-Markdown/markdown).
 
 This was made to allow introducing fancier rendering (compared to static images) of
@@ -28,7 +28,7 @@ from markdown.preprocessors import Preprocessor
 
 class ScriptPreprocessor(Preprocessor):
     """Preprocessor to catch and replace the `%[]()` markers.
-    
+
     We are here abusing the `Markdown` link syntax; we need to run it *before* the
     regular processing of the `Markdown` content.
     """

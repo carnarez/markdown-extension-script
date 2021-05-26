@@ -2,7 +2,7 @@
 
 Python-Markdown extension processing the `%[]()` markers into `<script>` tags.
 
-`pip install git+https://github.com/carnarez/pymdx-script` and refer to the brilliant
+`pip install git+https://github.com/carnarez/markdown-script` and refer to the brilliant
 [`Python` implementation](https://github.com/Python-Markdown/markdown).
 
 This was made to allow introducing fancier rendering (compared to static images) of
@@ -21,8 +21,8 @@ assert rendered == expected
 
 **Classes:**
 
-* [`ScriptPreprocessor`](#markdown_scriptscriptpreprocessor)
-* [`ScriptExtension`](#markdown_scriptscriptextension)
+- [`ScriptPreprocessor`](#markdown_scriptscriptpreprocessor)
+- [`ScriptExtension`](#markdown_scriptscriptextension)
 
 ## Classes
 
@@ -30,14 +30,14 @@ assert rendered == expected
 
 Preprocessor to catch and replace the `%[]()` markers.
 
-We are here abusing the `Markdown` link syntax; we need to run it *before* the
-regular processing of the `Markdown` content.
+We are here abusing the `Markdown` link syntax; we need to run it *before* the regular
+processing of the `Markdown` content.
 
 **Methods:**
 
-* [`html()`](#markdown_scriptscriptpreprocessorhtml)
-* [`sanitize()`](#markdown_scriptscriptpreprocessorsanitize)
-* [`run()`](#markdown_scriptscriptpreprocessorrun)
+- [`html()`](#markdown_scriptscriptpreprocessorhtml)
+- [`sanitize()`](#markdown_scriptscriptpreprocessorsanitize)
+- [`run()`](#markdown_scriptscriptpreprocessorrun)
 
 #### Constructor
 
@@ -49,7 +49,7 @@ All methods except `run()` from `markdown.preprocessors.Preprocessor`.
 
 **Parameters:**
 
-* `md` [`markdown.core.Markdown`]: Internal `Markdown` object to process.
+- `md` \[`markdown.core.Markdown`\]: Internal `Markdown` object to process.
 
 #### Methods
 
@@ -69,13 +69,13 @@ Returned HTML:
 
 **Parameters:**
 
-* `id_` [`str`]: The `id` of the HTML elements. To be fetched via `.getElementById()` in the
-    script itself.
-* `src` [`str`]: The path to the script.
+- `id_` \[`str`\]: The `id` of the HTML elements. To be fetched via `.getElementById()`
+  in the script itself.
+- `src` \[`str`\]: The path to the script.
 
 **Returns:**
 
-* [`str`]: HTML tag with attributes.
+- \[`str`\]: HTML tag with attributes.
 
 **Decoration** via `@staticmethod`.
 
@@ -87,17 +87,17 @@ sanitize(string: str) -> str:
 
 Clean up a string intended as a HTML element `id`.
 
-* Strip non-alphanumerical characters
-* Lowercase
-* Replace all spaces by hyphens
+- Strip non-alphanumerical characters
+- Lowercase
+- Replace all spaces by hyphens
 
 **Parameters:**
 
-* `string` [`str`]: String to process.
+- `string` \[`str`\]: String to process.
 
 **Returns:**
 
-* [`str`]: Processed string.
+- \[`str`\]: Processed string.
 
 **Decoration** via `@staticmethod`.
 
@@ -111,12 +111,12 @@ Overwritten method to process the input `Markdown` lines.
 
 **Paramaters:**
 
-* `lines` [`typing.List[str]`]: `Markdown` content (split by `\n`).
+- `lines` \[`typing.List[str]`\]: `Markdown` content (split by `\n`).
 
 **Returns:**
 
-* [`typing.List[str]`]: Same list of lines, but processed (*e.g.*, containing HTML elements
-    already).
+- \[`typing.List[str]`\]: Same list of lines, but processed (*e.g.*, containing HTML
+  elements already).
 
 ### `markdown_script.ScriptExtension`
 
@@ -124,7 +124,7 @@ Extension proper, to be imported when calling for the `Markdown` renderer.
 
 **Methods:**
 
-* [`extendMarkdown()`](#markdown_scriptscriptextensionextendmarkdown)
+- [`extendMarkdown()`](#markdown_scriptscriptextensionextendmarkdown)
 
 #### Constructor
 
@@ -144,9 +144,9 @@ Overwritten method to process the content.
 
 **Parameters:**
 
-* `md` [`markdown.core.Markdown`]: Internal `Markdown` object to process.
+- `md` \[`markdown.core.Markdown`\]: Internal `Markdown` object to process.
 
 **Notes:**
 
-Since we are abusing the `Markdown` link syntax the preprocessor needs to be
-called with a high priority (100).
+Since we are abusing the `Markdown` link syntax the preprocessor needs to be called with
+a high priority (100).
