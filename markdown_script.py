@@ -1,15 +1,19 @@
-"""Python-Markdown extension converting the `%[]()` markers into `<script>` tags.
+"""Python-Markdown extension processing the `%[]()` markers into `<script>` tags.
 
 `pip install git+https://github.com/carnarez/pymdx-script` and refer to the brilliant
 [`Python` implementation](https://github.com/Python-Markdown/markdown).
+
+This was made to allow introducing fancier rendering (compared to static images) of
+plots (for instance) in `Markdown`. **Use with caution**, only allow trusted/reviewed
+`JavaScript` to run on your pages.
 
 Example
 -------
 ```python
 import markdown
-provided = "%[Run script.js (d3.js)](/wherever/script.js)"
+provided = "%[Run script (d3.js)](/wherever/script.js)"
 rendered = markdown.markdown(provided, extensions=[ScriptExtension()])
-expected = '<p id="run-scriptjs-d3js"><script src="/wherever/script.js"></script></p>'
+expected = '<p id="run-script-d3js"><script src="/wherever/script.js"></script></p>'
 assert rendered == expected
 ```
 """
@@ -23,10 +27,14 @@ from markdown.preprocessors import Preprocessor
 
 
 class ScriptPreprocessor(Preprocessor):
-    """Preprocessor to catch and replace the `%[]()` markers."""
+    """Preprocessor to catch and replace the `%[]()` markers.
+    
+    We are here abusing the `Markdown` link syntax; we need to run it *before* the
+    regular processing of the `Markdown` content.
+    """
 
     def __init__(self, md: Markdown):
-        """All methods inherited, but the `run()` one below.
+        """All methods except `run()` from `markdown.preprocessors.Preprocessor`.
 
         Parameters
         ----------
@@ -39,7 +47,7 @@ class ScriptPreprocessor(Preprocessor):
     def html(id_: str, src: str) -> str:
         """Return the HTML block including the parameters.
 
-        At the moment, the returned HTML is:
+        Returned HTML:
 
         ```html
         <p id=""><script src=""></script></p>
@@ -48,24 +56,25 @@ class ScriptPreprocessor(Preprocessor):
         Parameters
         ----------
         id_ : str
-            The `id` of the HTML elements. To be fetched via `.getElementById()`.
+            The `id` of the HTML elements. To be fetched via `.getElementById()` in the
+            script itself.
         src : str
             The path to the script.
 
         Returns
         -------
         : str
-            HTML elements.
+            HTML tag with attributes.
         """
         return f'<p id="{id_}"><script src="{src}"></script></p>'
 
     @staticmethod
     def sanitize(string: str) -> str:
-        """Clean up a string.
+        """Clean up a string intended as a HTML element `id`.
 
-        1. Strip non-alphanumerical characters
-        2. Lowercase
-        3. Replace all spaces by hyphens
+        * Strip non-alphanumerical characters
+        * Lowercase
+        * Replace all spaces by hyphens
 
         Parameters
         ----------
@@ -90,10 +99,12 @@ class ScriptPreprocessor(Preprocessor):
         Returns
         -------
         : typing.List[str]
-            Same list of lines, processed.
+            Same list of lines, but processed (*e.g.*, containing HTML elements
+            already).
         """
         for i, line in enumerate(lines):
             for decl in re.findall(r"(%\[.+?\]\(.+?\))", line):
+
                 id_, src = re.match(r"%\[(.*)\]\((.*)\)", decl).groups()
                 id_ = self.sanitize(id_)
 
@@ -103,7 +114,7 @@ class ScriptPreprocessor(Preprocessor):
 
 
 class ScriptExtension(Extension):
-    """Extension to be imported when calling for the renderer."""
+    """Extension proper, to be imported when calling for the `Markdown` renderer."""
 
     def extendMarkdown(self, md: Markdown):
         """Overwritten method to process the content.
@@ -116,7 +127,7 @@ class ScriptExtension(Extension):
         Notes
         -----
         Since we are abusing the `Markdown` link syntax the preprocessor needs to be
-        called with a high priority.
+        called with a high priority (100).
         """
         md.preprocessors.register(
             ScriptPreprocessor(md), name="script-tags", priority=100

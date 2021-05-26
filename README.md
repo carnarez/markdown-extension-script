@@ -1,36 +1,43 @@
-# Module `pymdx_script`
+# Module `markdown_script`
 
-Python-Markdown extension converting the `%[]()` markers into `<script>` tags.
+Python-Markdown extension processing the `%[]()` markers into `<script>` tags.
 
 `pip install git+https://github.com/carnarez/pymdx-script` and refer to the brilliant
 [`Python` implementation](https://github.com/Python-Markdown/markdown).
+
+This was made to allow introducing fancier rendering (compared to static images) of
+plots (for instance) in `Markdown`. **Use with caution**, only allow trusted/reviewed
+`JavaScript` to run on your pages.
 
 **Example:**
 
 ```python
 import markdown
-provided = "%[Run script.js (d3.js)](/wherever/script.js)"
+provided = "%[Run script (d3.js)](/wherever/script.js)"
 rendered = markdown.markdown(provided, extensions=[ScriptExtension()])
-expected = '<p id="run-scriptjs-d3js"><script src="/wherever/script.js"></script></p>'
+expected = '<p id="run-script-d3js"><script src="/wherever/script.js"></script></p>'
 assert rendered == expected
 ```
 
 **Classes:**
 
-- [`ScriptPreprocessor`](#pymdx_scriptscriptpreprocessor)
-- [`ScriptExtension`](#pymdx_scriptscriptextension)
+* [`ScriptPreprocessor`](#markdown_scriptscriptpreprocessor)
+* [`ScriptExtension`](#markdown_scriptscriptextension)
 
 ## Classes
 
-### `pymdx_script.ScriptPreprocessor`
+### `markdown_script.ScriptPreprocessor`
 
 Preprocessor to catch and replace the `%[]()` markers.
 
+We are here abusing the `Markdown` link syntax; we need to run it *before* the
+regular processing of the `Markdown` content.
+
 **Methods:**
 
-- [`html()`](#pymdx_scriptscriptpreprocessorhtml)
-- [`sanitize()`](#pymdx_scriptscriptpreprocessorsanitize)
-- [`run()`](#pymdx_scriptscriptpreprocessorrun)
+* [`html()`](#markdown_scriptscriptpreprocessorhtml)
+* [`sanitize()`](#markdown_scriptscriptpreprocessorsanitize)
+* [`run()`](#markdown_scriptscriptpreprocessorrun)
 
 #### Constructor
 
@@ -38,15 +45,15 @@ Preprocessor to catch and replace the `%[]()` markers.
 ScriptPreprocessor(md: Markdown)
 ```
 
-All methods inherited, but the `run()` one below.
+All methods except `run()` from `markdown.preprocessors.Preprocessor`.
 
 **Parameters:**
 
-- `md` \[`markdown.core.Markdown`\]: Internal `Markdown` object to process.
+* `md` [`markdown.core.Markdown`]: Internal `Markdown` object to process.
 
 #### Methods
 
-##### `pymdx_script.ScriptPreprocessor.html`
+##### `markdown_script.ScriptPreprocessor.html`
 
 ```python
 html(id_: str, src: str) -> str:
@@ -54,7 +61,7 @@ html(id_: str, src: str) -> str:
 
 Return the HTML block including the parameters.
 
-At the moment, the returned HTML is:
+Returned HTML:
 
 ```html
 <p id=""><script src=""></script></p>
@@ -62,38 +69,39 @@ At the moment, the returned HTML is:
 
 **Parameters:**
 
-- `id_` \[`str`\]: The `id` of the HTML elements. To be fetched via `.getElementById()`.
-- `src` \[`str`\]: The path to the script.
+* `id_` [`str`]: The `id` of the HTML elements. To be fetched via `.getElementById()` in the
+    script itself.
+* `src` [`str`]: The path to the script.
 
 **Returns:**
 
-- \[`str`\]: HTML elements.
+* [`str`]: HTML tag with attributes.
 
 **Decoration** via `@staticmethod`.
 
-##### `pymdx_script.ScriptPreprocessor.sanitize`
+##### `markdown_script.ScriptPreprocessor.sanitize`
 
 ```python
 sanitize(string: str) -> str:
 ```
 
-Clean up a string.
+Clean up a string intended as a HTML element `id`.
 
-1. Strip non-alphanumerical characters
-1. Lowercase
-1. Replace all spaces by hyphens
+* Strip non-alphanumerical characters
+* Lowercase
+* Replace all spaces by hyphens
 
 **Parameters:**
 
-- `string` \[`str`\]: String to process.
+* `string` [`str`]: String to process.
 
 **Returns:**
 
-- \[`str`\]: Processed string.
+* [`str`]: Processed string.
 
 **Decoration** via `@staticmethod`.
 
-##### `pymdx_script.ScriptPreprocessor.run`
+##### `markdown_script.ScriptPreprocessor.run`
 
 ```python
 run(lines: typing.List[str]) -> typing.List[str]:
@@ -103,19 +111,20 @@ Overwritten method to process the input `Markdown` lines.
 
 **Paramaters:**
 
-- `lines` \[`typing.List[str]`\]: `Markdown` content (split by `\n`).
+* `lines` [`typing.List[str]`]: `Markdown` content (split by `\n`).
 
 **Returns:**
 
-- \[`typing.List[str]`\]: Same list of lines, processed.
+* [`typing.List[str]`]: Same list of lines, but processed (*e.g.*, containing HTML elements
+    already).
 
-### `pymdx_script.ScriptExtension`
+### `markdown_script.ScriptExtension`
 
-Extension to be imported when calling for the renderer.
+Extension proper, to be imported when calling for the `Markdown` renderer.
 
 **Methods:**
 
-- [`extendMarkdown()`](#pymdx_scriptscriptextensionextendmarkdown)
+* [`extendMarkdown()`](#markdown_scriptscriptextensionextendmarkdown)
 
 #### Constructor
 
@@ -125,7 +134,7 @@ ScriptExtension()
 
 #### Methods
 
-##### `pymdx_script.ScriptExtension.extendMarkdown`
+##### `markdown_script.ScriptExtension.extendMarkdown`
 
 ```python
 extendMarkdown(md: Markdown):
@@ -135,9 +144,9 @@ Overwritten method to process the content.
 
 **Parameters:**
 
-- `md` \[`markdown.core.Markdown`\]: Internal `Markdown` object to process.
+* `md` [`markdown.core.Markdown`]: Internal `Markdown` object to process.
 
 **Notes:**
 
-Since we are abusing the `Markdown` link syntax the preprocessor needs to be called with
-a high priority.
+Since we are abusing the `Markdown` link syntax the preprocessor needs to be
+called with a high priority (100).
