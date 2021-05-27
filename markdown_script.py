@@ -103,12 +103,12 @@ class ScriptPreprocessor(Preprocessor):
             already).
         """
         for i, line in enumerate(lines):
-            for decl in re.findall(r"(%\[.+?\]\(.+?\))", line):
+            for m in re.finditer(r"%\[(.+?)\]\((.+?)\)", line):
 
-                id_, src = re.match(r"%\[(.*)\]\((.*)\)", decl).groups()
+                id_, src = m.groups()
                 id_ = self.sanitize(id_)
 
-                lines[i] = line.replace(decl, self.html(id_, src))
+                lines[i] = line.replace(m.group(0), self.html(id_, src))
 
         return lines
 
