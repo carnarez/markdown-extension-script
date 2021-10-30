@@ -1,0 +1,16 @@
+import typing
+
+from markdown.core import Markdown
+from markdown.extensions import Extension
+from markdown.preprocessors import Preprocessor
+
+class ScriptPreprocessor(Preprocessor):
+    def __init__(self, md: Markdown) -> None: ...
+    @staticmethod
+    def html(id_: str, src: str) -> str: ...
+    @staticmethod
+    def sanitize(string: str) -> str: ...
+    def run(self, lines: typing.List[str]) -> typing.List[str]: ...
+
+class ScriptExtension(Extension):
+    def extendMarkdown(self, md: Markdown): ...
