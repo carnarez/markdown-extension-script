@@ -1,6 +1,6 @@
 """Make `markdown-script` installable (via `pip install git+https://...`)."""
 
-import setuptools
+import setuptools  # type: ignore
 
 setuptools.setup(
     author="carnarez",
@@ -9,6 +9,7 @@ setuptools.setup(
     ),
     install_requires=["markdown"],
     name="markdown-script",
+    package_data={"": ["*.pyi"]},
     py_modules=["markdown_script"],
     url="https://github.com/carnarez/markdown-script",
     version="0.0.1",
