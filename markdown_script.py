@@ -102,13 +102,23 @@ class ScriptPreprocessor(Preprocessor):
             Same list of lines, but processed (*e.g.*, containing HTML elements
             already).
         """
+        escaped = 0
+
         for i, line in enumerate(lines):
-            for m in re.finditer(r"%\[(.+?)\]\((.+?)\)", line):
 
-                id_, src = m.groups()
-                id_ = self.sanitize(id_)
+            if line.startswith("```"):
+                escaped = line.count("`")
 
-                lines[i] = line.replace(m.group(0), self.html(id_, src))
+            if escaped and line == escaped * "`":
+                escaped = 0
+
+            if not escaped:
+                for m in re.finditer(r"%\[(.+?)\]\((.+?)\)", line):
+
+                    id_, src = m.groups()
+                    id_ = self.sanitize(id_)
+
+                    lines[i] = line.replace(m.group(0), self.html(id_, src))
 
         return lines
 
