@@ -109,7 +109,7 @@ run(lines: typing.List[str]) -> typing.List[str]:
 
 Overwritten method to process the input `Markdown` lines.
 
-**Paramaters:**
+**Parameters:**
 
 - `lines` \[`typing.List[str]`\]: `Markdown` content (split by `\n`).
 
