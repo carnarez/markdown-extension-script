@@ -21,8 +21,10 @@ assert rendered == expected
 
 **Classes:**
 
-- [`ScriptPreprocessor`](#markdown_scriptscriptpreprocessor)
-- [`ScriptExtension`](#markdown_scriptscriptextension)
+- [`ScriptPreprocessor`](#markdown_scriptscriptpreprocessor): Preprocessor to catch and
+  replace the `%[]()` markers.
+- [`ScriptExtension`](#markdown_scriptscriptextension): Extension proper, to be imported
+  when calling for the `Markdown` renderer.
 
 ## Classes
 
@@ -35,9 +37,12 @@ processing of the `Markdown` content.
 
 **Methods:**
 
-- [`html()`](#markdown_scriptscriptpreprocessorhtml)
-- [`sanitize()`](#markdown_scriptscriptpreprocessorsanitize)
-- [`run()`](#markdown_scriptscriptpreprocessorrun)
+- [`html()`](#markdown_scriptscriptpreprocessorhtml): Return the HTML block including
+  the parameters.
+- [`sanitize()`](#markdown_scriptscriptpreprocessorsanitize): Clean up a string intended
+  as a HTML element `id`.
+- [`run()`](#markdown_scriptscriptpreprocessorrun): Overwritten method to process the
+  input `Markdown` lines.
 
 #### Constructor
 
@@ -124,7 +129,8 @@ Extension proper, to be imported when calling for the `Markdown` renderer.
 
 **Methods:**
 
-- [`extendMarkdown()`](#markdown_scriptscriptextensionextendmarkdown)
+- [`extendMarkdown()`](#markdown_scriptscriptextensionextendmarkdown): Overwritten
+  method to process the content.
 
 #### Constructor
 
