@@ -9,8 +9,8 @@ setuptools.setup(
     ),
     install_requires=["markdown"],
     name="markdown-script",
-    package_data={"": ["*.pyi"]},
-    py_modules=["markdown_script"],
+    packages=["markdown_script"],
+    package_data={"markdown_script": ["*.pyi", "py.typed"]},
     url="https://github.com/carnarez/markdown-script",
     version="0.0.1",
 )
