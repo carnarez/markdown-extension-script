@@ -19,7 +19,6 @@ assert rendered == expected
 """
 
 import re
-import typing
 
 from markdown.core import Markdown
 from markdown.extensions import Extension
@@ -88,17 +87,17 @@ class ScriptPreprocessor(Preprocessor):
         """
         return "".join(re.findall(r"[A-Za-z0-9 ]+", string)).lower().replace(" ", "-")
 
-    def run(self, lines: typing.List[str]) -> typing.List[str]:
+    def run(self, lines: list[str]) -> list[str]:
         r"""Overwritten method to process the input `Markdown` lines.
 
         Parameters
         ----------
-        lines : typing.List[str]
+        lines : list[str]
             `Markdown` content (split by `\n`).
 
         Returns
         -------
-        : typing.List[str]
+        : list[str]
             Same list of lines, but processed (*e.g.*, containing HTML elements
             already).
         """
