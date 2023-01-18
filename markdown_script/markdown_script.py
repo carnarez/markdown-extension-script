@@ -7,13 +7,19 @@ This was made to allow introducing fancier rendering (compared to static images)
 plots (for instance) in `Markdown`. **Use with caution**, only allow trusted/reviewed
 `JavaScript` to run on your pages.
 
+The **`type="module"`** attribute is made available via the `?module` keyword in the alt
+text. This keyword is located in the alt text to avoid breaking common renderer
+behaviour (GitHub included). It is expected to be separated from the actual alt text
+(used as object `id`) by a space, and be the last content within the alt text provided
+in between the square brackets (`[]`). (If unclear see example right below.)
+
 Example
 -------
 ```python
 import markdown
-provided = "%[Run script (d3.js)](/wherever/script.js)"
+provided = "%[Run script ?module](/src/script.js)"
 rendered = markdown.markdown(provided, extensions=[ScriptExtension()])
-expected = '<p id="run-script-d3js"><script src="/wherever/script.js"></script></p>'
+expected = '<p id="run-script"><script src="/src/script.js" type="module"></script></p>'
 assert rendered == expected
 ```
 """
@@ -43,7 +49,7 @@ class ScriptPreprocessor(Preprocessor):
         super().__init__(md)
 
     @staticmethod
-    def html(id_: str, src: str) -> str:
+    def html(id_: str, src: str, mod: bool = False) -> str:
         """Return the HTML block including the parameters.
 
         Returned HTML:
@@ -59,13 +65,18 @@ class ScriptPreprocessor(Preprocessor):
             script itself.
         src : str
             The path to the script.
+        mod : bool
+            Whether the linked script is a `JavaScript` module.
 
         Returns
         -------
         : str
             HTML tag with attributes.
         """
-        return f'<p id="{id_}"><script src="{src}"></script></p>'
+        if mod:
+            return f'<p id="{id_}"><script src="{src}" type="module"></script></p>'
+        else:
+            return f'<p id="{id_}"><script src="{src}"></script></p>'
 
     @staticmethod
     def sanitize(string: str) -> str:
@@ -114,10 +125,17 @@ class ScriptPreprocessor(Preprocessor):
             if not escaped:
                 for m in re.finditer(r"%\[(.+?)\]\((.+?)\)", line):
 
-                    id_, src = m.groups()
+                    id_, src = list(map(str.strip, m.groups()))
+
+                    # check for a potential module marker
+                    mod = False
+                    if (m_ := re.search(r"(.*)\s+\?module$", id_)) is not None:
+                        id_ = m_.group(1)
+                        mod = True
+
                     id_ = self.sanitize(id_)
 
-                    lines[i] = line.replace(m.group(0), self.html(id_, src))
+                    lines[i] = line.replace(m.group(0), self.html(id_, src, mod))
 
         return lines
 

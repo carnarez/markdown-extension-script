@@ -9,17 +9,23 @@ This was made to allow introducing fancier rendering (compared to static images)
 plots (for instance) in `Markdown`. **Use with caution**, only allow trusted/reviewed
 `JavaScript` to run on your pages.
 
-**Example:**
+The **`type="module"`** attribute is made available via the `?module` keyword in the alt
+text. This keyword is located in the alt text to avoid breaking common renderer
+behaviour (GitHub included). It is expected to be separated from the actual alt text
+(used as object `id`) by a space, and be the last content within the alt text provided
+in between the square brackets (`[]`). (If unclear see example right below.)
+
+**Example**
 
 ```python
 import markdown
-provided = "%[Run script (d3.js)](/wherever/script.js)"
+provided = "%[Run script ?module](/src/script.js)"
 rendered = markdown.markdown(provided, extensions=[ScriptExtension()])
-expected = '<p id="run-script-d3js"><script src="/wherever/script.js"></script></p>'
+expected = '<p id="run-script"><script src="/src/script.js" type="module"></script></p>'
 assert rendered == expected
 ```
 
-**Classes:**
+**Classes**
 
 - [`ScriptPreprocessor`](#markdown_scriptscriptpreprocessor): Preprocessor to catch and
   replace the `%[]()` markers.
@@ -35,7 +41,7 @@ Preprocessor to catch and replace the `%[]()` markers.
 We are here abusing the `Markdown` link syntax; we need to run it *before* the regular
 processing of the `Markdown` content.
 
-**Methods:**
+**Methods**
 
 - [`html()`](#markdown_scriptscriptpreprocessorhtml): Return the HTML block including
   the parameters.
@@ -52,7 +58,7 @@ ScriptPreprocessor(md: Markdown)
 
 All methods except `run()` from `markdown.preprocessors.Preprocessor`.
 
-**Parameters:**
+**Parameters**
 
 - `md` \[`markdown.core.Markdown`\]: Internal `Markdown` object to process.
 
@@ -61,7 +67,7 @@ All methods except `run()` from `markdown.preprocessors.Preprocessor`.
 ##### `markdown_script.ScriptPreprocessor.html`
 
 ```python
-html(id_: str, src: str) -> str:
+html(id_: str, src: str, mod: bool = False) -> str:
 ```
 
 Return the HTML block including the parameters.
@@ -72,13 +78,14 @@ Returned HTML:
 <p id=""><script src=""></script></p>
 ```
 
-**Parameters:**
+**Parameters**
 
 - `id_` \[`str`\]: The `id` of the HTML elements. To be fetched via `.getElementById()`
   in the script itself.
 - `src` \[`str`\]: The path to the script.
+- `mod` \[`bool`\]: Whether the linked script is a `JavaScript` module.
 
-**Returns:**
+**Returns**
 
 - \[`str`\]: HTML tag with attributes.
 
@@ -96,11 +103,11 @@ Clean up a string intended as a HTML element `id`.
 - Lowercase
 - Replace all spaces by hyphens
 
-**Parameters:**
+**Parameters**
 
 - `string` \[`str`\]: String to process.
 
-**Returns:**
+**Returns**
 
 - \[`str`\]: Processed string.
 
@@ -109,25 +116,25 @@ Clean up a string intended as a HTML element `id`.
 ##### `markdown_script.ScriptPreprocessor.run`
 
 ```python
-run(lines: typing.List[str]) -> typing.List[str]:
+run(lines: list[str]) -> list[str]:
 ```
 
 Overwritten method to process the input `Markdown` lines.
 
-**Parameters:**
+**Parameters**
 
-- `lines` \[`typing.List[str]`\]: `Markdown` content (split by `\n`).
+- `lines` \[`list[str]`\]: `Markdown` content (split by `\n`).
 
-**Returns:**
+**Returns**
 
-- \[`typing.List[str]`\]: Same list of lines, but processed (*e.g.*, containing HTML
-  elements already).
+- \[`list[str]`\]: Same list of lines, but processed (*e.g.*, containing HTML elements
+  already).
 
 ### `markdown_script.ScriptExtension`
 
 Extension proper, to be imported when calling for the `Markdown` renderer.
 
-**Methods:**
+**Methods**
 
 - [`extendMarkdown()`](#markdown_scriptscriptextensionextendmarkdown): Overwritten
   method to process the content.
@@ -148,11 +155,11 @@ extendMarkdown(md: Markdown):
 
 Overwritten method to process the content.
 
-**Parameters:**
+**Parameters**
 
 - `md` \[`markdown.core.Markdown`\]: Internal `Markdown` object to process.
 
-**Notes:**
+**Notes**
 
 Since we are abusing the `Markdown` link syntax the preprocessor needs to be called with
 a high priority (100).
