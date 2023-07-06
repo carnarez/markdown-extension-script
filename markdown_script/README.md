@@ -15,7 +15,7 @@ behaviour (GitHub included). It is expected to be separated from the actual alt 
 (used as object `id`) by a space, and be the last content within the alt text provided
 in between the square brackets (`[]`). (If unclear see example right below.)
 
-**Example**
+## Example:
 
 ```python
 import markdown
@@ -150,7 +150,7 @@ ScriptExtension()
 ##### `markdown_script.ScriptExtension.extendMarkdown`
 
 ```python
-extendMarkdown(md: Markdown):
+extendMarkdown(md: Markdown) -> None:
 ```
 
 Overwritten method to process the content.
