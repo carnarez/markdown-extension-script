@@ -13,7 +13,7 @@ behaviour (GitHub included). It is expected to be separated from the actual alt 
 (used as object `id`) by a space, and be the last content within the alt text provided
 in between the square brackets (`[]`). (If unclear see example right below.)
 
-Example
+Example:
 -------
 ```python
 import markdown
@@ -22,6 +22,7 @@ rendered = markdown.markdown(provided, extensions=[ScriptExtension()])
 expected = '<p id="run-script"><script src="/src/script.js" type="module"></script></p>'
 assert rendered == expected
 ```
+
 """
 
 import re
@@ -38,7 +39,7 @@ class ScriptPreprocessor(Preprocessor):
     regular processing of the `Markdown` content.
     """
 
-    def __init__(self, md: Markdown):
+    def __init__(self, md: Markdown) -> None:
         """All methods except `run()` from `markdown.preprocessors.Preprocessor`.
 
         Parameters
@@ -73,10 +74,11 @@ class ScriptPreprocessor(Preprocessor):
         : str
             HTML tag with attributes.
         """
-        if mod:
-            return f'<p id="{id_}"><script src="{src}" type="module"></script></p>'
-        else:
-            return f'<p id="{id_}"><script src="{src}"></script></p>'
+        return (
+            f'<p id="{id_}"><script src="{src}" type="module"></script></p>'
+            if mod
+            else f'<p id="{id_}"><script src="{src}"></script></p>'
+        )
 
     @staticmethod
     def sanitize(string: str) -> str:
@@ -115,7 +117,6 @@ class ScriptPreprocessor(Preprocessor):
         escaped = 0
 
         for i, line in enumerate(lines):
-
             if line.startswith("```"):
                 escaped = line.count("`")
 
@@ -124,7 +125,6 @@ class ScriptPreprocessor(Preprocessor):
 
             if not escaped:
                 for m in re.finditer(r"%\[(.+?)\]\((.+?)\)", line):
-
                     id_, src = list(map(str.strip, m.groups()))
 
                     # check for a potential module marker
@@ -143,7 +143,7 @@ class ScriptPreprocessor(Preprocessor):
 class ScriptExtension(Extension):
     """Extension proper, to be imported when calling for the `Markdown` renderer."""
 
-    def extendMarkdown(self, md: Markdown):
+    def extendMarkdown(self, md: Markdown) -> None:
         """Overwritten method to process the content.
 
         Parameters
@@ -157,5 +157,7 @@ class ScriptExtension(Extension):
         called with a high priority (100).
         """
         md.preprocessors.register(
-            ScriptPreprocessor(md), name="script-tags", priority=100
+            ScriptPreprocessor(md),
+            name="script-tags",
+            priority=100,
         )
