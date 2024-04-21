@@ -46,6 +46,7 @@ class ScriptPreprocessor(Preprocessor):
         ----------
         md : markdown.core.Markdown
             Internal `Markdown` object to process.
+
         """
         super().__init__(md)
 
@@ -73,6 +74,7 @@ class ScriptPreprocessor(Preprocessor):
         -------
         : str
             HTML tag with attributes.
+
         """
         return (
             f'<p id="{id_}"><script src="{src}" type="module"></script></p>'
@@ -97,6 +99,7 @@ class ScriptPreprocessor(Preprocessor):
         -------
         : str
             Processed string.
+
         """
         return "".join(re.findall(r"[A-Za-z0-9 ]+", string)).lower().replace(" ", "-")
 
@@ -113,6 +116,7 @@ class ScriptPreprocessor(Preprocessor):
         : list[str]
             Same list of lines, but processed (*e.g.*, containing HTML elements
             already).
+
         """
         escaped = 0
 
@@ -155,6 +159,7 @@ class ScriptExtension(Extension):
         -----
         Since we are abusing the `Markdown` link syntax the preprocessor needs to be
         called with a high priority (100).
+
         """
         md.preprocessors.register(
             ScriptPreprocessor(md),

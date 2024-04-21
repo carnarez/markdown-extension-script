@@ -6,3 +6,4 @@ operator.** Get it via a simple:
 ```shell
 $ pip install git+https://github.com/carnarez/markdown-script@master
 ```
+
